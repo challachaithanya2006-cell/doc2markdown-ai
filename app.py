@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, send_file
 from converters.pdf_converter import convert_pdf
 from converters.docx_converter import convert_docx
+from converters.image_converter import convert_image
 import os
 
 app = Flask(__name__)
@@ -38,9 +39,23 @@ def upload_file():
     elif file.filename.lower().endswith(".docx"):
         extracted_text = convert_docx(filepath)
 
+    elif file.filename.lower().endswith(
+        (".png", ".jpg", ".jpeg")
+    ):
+        extracted_text = convert_image(filepath)
+
     else:
         return """
-        <h2>❌ Supported Formats: PDF, DOCX</h2>
+        <h2>❌ Supported Formats:</h2>
+
+        <ul>
+            <li>PDF</li>
+            <li>DOCX</li>
+            <li>PNG</li>
+            <li>JPG</li>
+            <li>JPEG</li>
+        </ul>
+
         <a href="/">Go Back</a>
         """
 
@@ -66,28 +81,31 @@ def upload_file():
     return f"""
     <!DOCTYPE html>
     <html>
+
     <head>
         <title>Conversion Complete</title>
     </head>
+
     <body>
 
-    <h1>✅ Conversion Successful</h1>
+        <h1>✅ Conversion Successful</h1>
 
-    <p>
-        {file.filename} converted to Markdown.
-    </p>
+        <p>
+            {file.filename} converted successfully.
+        </p>
 
-    <a href="/download/{md_filename}">
-        Download Markdown File
-    </a>
+        <a href="/download/{md_filename}">
+            Download Markdown File
+        </a>
 
-    <br><br>
+        <br><br>
 
-    <a href="/">
-        Convert Another File
-    </a>
+        <a href="/">
+            Convert Another File
+        </a>
 
     </body>
+
     </html>
     """
 
