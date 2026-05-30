@@ -158,7 +158,7 @@ python app.py
 **Challa Naga Chaitanya Sai**
 
 * GitHub: https://github.com/challachaithanya2006-cell
-* LinkedIn: Add your LinkedIn profile here
+* LinkedIn: https://www.linkedin.com/in/challa-naga-chaitanya-sai-oo777/
 
 ---
 
