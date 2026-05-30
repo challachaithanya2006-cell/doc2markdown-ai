@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, send_file
 from converters.pdf_converter import convert_pdf
+from converters.docx_converter import convert_docx
 import os
 
 app = Flask(__name__)
@@ -32,56 +33,62 @@ def upload_file():
     file.save(filepath)
 
     if file.filename.lower().endswith(".pdf"):
-
         extracted_text = convert_pdf(filepath)
 
-        markdown_content = f"# {file.filename}\n\n{extracted_text}"
+    elif file.filename.lower().endswith(".docx"):
+        extracted_text = convert_docx(filepath)
 
-        md_filename = file.filename.replace(".pdf", ".md")
-
-        md_path = os.path.join(
-            OUTPUT_FOLDER,
-            md_filename
-        )
-
-        with open(
-            md_path,
-            "w",
-            encoding="utf-8"
-        ) as md_file:
-            md_file.write(markdown_content)
-
-        return f"""
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Conversion Complete</title>
-        </head>
-        <body>
-
-        <h1>✅ Conversion Successful</h1>
-
-        <p>
-            PDF converted to Markdown successfully.
-        </p>
-
-        <a href="/download/{md_filename}">
-            Download Markdown File
-        </a>
-
-        <br><br>
-
-        <a href="/">
-            Convert Another File
-        </a>
-
-        </body>
-        </html>
+    else:
+        return """
+        <h2>❌ Supported Formats: PDF, DOCX</h2>
+        <a href="/">Go Back</a>
         """
 
-    return """
-    <h2>❌ Only PDF files are supported.</h2>
-    <a href="/">Go Back</a>
+    markdown_content = f"# {file.filename}\n\n{extracted_text}"
+
+    md_filename = (
+        os.path.splitext(file.filename)[0]
+        + ".md"
+    )
+
+    md_path = os.path.join(
+        OUTPUT_FOLDER,
+        md_filename
+    )
+
+    with open(
+        md_path,
+        "w",
+        encoding="utf-8"
+    ) as md_file:
+        md_file.write(markdown_content)
+
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Conversion Complete</title>
+    </head>
+    <body>
+
+    <h1>✅ Conversion Successful</h1>
+
+    <p>
+        {file.filename} converted to Markdown.
+    </p>
+
+    <a href="/download/{md_filename}">
+        Download Markdown File
+    </a>
+
+    <br><br>
+
+    <a href="/">
+        Convert Another File
+    </a>
+
+    </body>
+    </html>
     """
 
 
