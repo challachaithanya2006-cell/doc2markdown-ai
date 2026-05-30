@@ -1,8 +1,17 @@
 from PyPDF2 import PdfReader
 
+
 def convert_pdf(file_path):
-    text=""
-    reader=PdfReader(file_path)
+
+    text = ""
+
+    reader = PdfReader(file_path)
+
     for page in reader.pages:
-        text += (page.extract_text() or "") + "\n"
+
+        page_text = page.extract_text()
+
+        if page_text:
+            text += page_text + "\n"
+
     return text
